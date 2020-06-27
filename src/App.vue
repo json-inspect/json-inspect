@@ -2,8 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
-      dark
+      
     >
       <div class="d-flex align-center mr-4">
         <v-icon class="mr-2">mdi-cloud-braces</v-icon>
@@ -27,11 +26,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text>
+      <!--<v-btn text>
         <v-icon class="mr-2">mdi-gift-outline</v-icon>  Donate
-      </v-btn>
+      </v-btn>-->
 
-      <v-btn text>
+      <v-btn @click="darkModeToggle" text>
         <v-icon class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
       </v-btn>
     </v-app-bar>
@@ -77,7 +76,8 @@ export default {
   data: () => ({
     tabs: [{name: 'Untitled', json: ''}],
     tab: null,
-    dynHeight: ''
+    dynHeight: '',
+    darkMode: false
   }),
 
   created() {
@@ -99,7 +99,20 @@ export default {
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
       this.dynHeight = (vh100 - 140) + 'px'
+    },
+    darkModeToggle() {
+      this.darkMode = !this.darkMode
+
+      if (this.darkMode) {
+        this.$vuetify.theme.dark = true
+      } else {
+        this.$vuetify.theme.dark = false
+      }
     }
+  },
+
+  computed: {
+    
   }
 };
 </script>
