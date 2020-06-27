@@ -41,9 +41,23 @@
           v-for="(tab, i) in tabs"
           :key="tab.name + i"
         >
-          <v-card flat>
-            <v-card-text>{{ tab.json }}</v-card-text>
-          </v-card>
+          <v-row class="ma-4">
+            <v-col cols="12" md="6" class="pb-0">
+              <v-textarea
+                solo
+                no-resize=""
+                :height="dynHeight"
+                label="Copy/paste valid JSON here"
+                v-model="tab.json"
+                class="mb-0"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12" md="6" class="pb-0">
+              <v-card class="pa-2 cheightf">
+                <tree-view :index="i" :json="tab.json" />
+              </v-card>
+            </v-col>
+          </v-row>
         </v-tab-item>
       </v-tabs-items>
     </v-main>
@@ -51,32 +65,48 @@
 </template>
 
 <script>
+import TreeView from './components/TreeView.vue'
+
 export default {
   name: 'App',
 
   components: {
-    
+    TreeView
   },
 
   data: () => ({
-    tabs: [{name: 'Untitled', json: '{"test": "test"}'}],
-    tab: null
+    tabs: [{name: 'Untitled', json: ''}],
+    tab: null,
+    dynHeight: ''
   }),
+
+  created() {
+    window.addEventListener('resize', this.dynHeightCalc);
+    this.dynHeightCalc();
+  },
 
   methods: {
     tabAdd() {
       this.tabs.push({
         name: 'Untitled',
-        json: '"datetime": ' + Date.now()
+        json: ''
       })
+      this.tab = this.tabs.length - 1
     },
     remove(i) {
       this.tabs.splice(i, 1)
+    },
+    dynHeightCalc() {
+      let vh100 = Math.round(window.innerHeight)
+      this.dynHeight = (vh100 - 140) + 'px'
     }
   }
 };
 </script>
 
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.cheightf {
+  height: calc(100vh - 140px);
+  overflow: auto;
+}
 </style>

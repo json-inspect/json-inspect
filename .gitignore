@@ -12,6 +12,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# firebase
+.firebaserc
+firebase.json
+
 # Editor directories and files
 .idea
 .vscode
