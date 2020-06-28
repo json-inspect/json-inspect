@@ -2,7 +2,8 @@
   <v-app>
     <v-app-bar
       app
-      
+      color="grey darken-3"
+      dark
     >
       <div class="d-flex align-center mr-4">
         <v-icon class="mr-2">mdi-cloud-braces</v-icon>
@@ -26,13 +27,13 @@
 
       <v-spacer></v-spacer>
 
-      <!--<v-btn text>
+      <v-btn text>
         <v-icon class="mr-2">mdi-gift-outline</v-icon>  Donate
-      </v-btn>-->
+      </v-btn>
 
-      <!--<v-btn @click="darkModeToggle" text>
+      <v-btn @click="darkModeToggle" text>
         <v-icon class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
-      </v-btn>-->
+      </v-btn>
     </v-app-bar>
     <v-main>
       <v-tabs-items v-model="tab">
