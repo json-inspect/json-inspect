@@ -9,17 +9,17 @@
         <v-toolbar-title>JSON Inspect</v-toolbar-title>
       </div>
 
-      <v-tabs v-model="tab">
+      <v-tabs v-model="tab" show-arrows>
         <v-tab
           v-for="(tab, i) in tabs"
-          :key="tab.name + i"
+          :key="tab.name"
         >
           {{tab.name}}
-          <v-btn @click="remove(i)" icon>
-            <v-icon x-small>mdi-close</v-icon>
+          <v-btn class="ml-2" x-small @click.stop="remove(i)" icon>
+            <v-icon >mdi-close</v-icon>
           </v-btn>
         </v-tab>
-        <v-btn @click="tabAdd" class="mt-2" icon>
+        <v-btn small @click="tabAdd" class="mt-5" icon>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-tabs>
@@ -30,15 +30,15 @@
         <v-icon class="mr-2">mdi-gift-outline</v-icon>  Donate
       </v-btn>-->
 
-      <v-btn @click="darkModeToggle" text>
+      <!--<v-btn @click="darkModeToggle" text>
         <v-icon class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
-      </v-btn>
+      </v-btn>-->
     </v-app-bar>
     <v-main>
       <v-tabs-items v-model="tab">
         <v-tab-item
           v-for="(tab, i) in tabs"
-          :key="tab.name + i"
+          :key="tab.name"
         >
           <v-row class="ma-4">
             <v-col cols="12" md="6" class="pb-0">
@@ -74,10 +74,11 @@ export default {
   },
 
   data: () => ({
-    tabs: [{name: 'Untitled', json: ''}],
-    tab: null,
+    tabs: [{name: 'Tab 1', json: ''}],
+    tab: 0,
     dynHeight: '',
-    darkMode: false
+    darkMode: false,
+    currentTabNumber: 2
   }),
 
   created() {
@@ -88,9 +89,10 @@ export default {
   methods: {
     tabAdd() {
       this.tabs.push({
-        name: 'Untitled',
+        name: 'Tab ' + this.currentTabNumber,
         json: ''
       })
+      this.currentTabNumber++
       this.tab = this.tabs.length - 1
     },
     remove(i) {
