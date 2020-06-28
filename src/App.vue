@@ -102,7 +102,7 @@ export default {
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 140) + 'px'
+      this.dynHeight = (vh100 - 130) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -123,7 +123,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 140px);
+  height: calc(100vh - 130px);
   overflow: auto;
 }
 </style>
