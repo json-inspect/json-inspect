@@ -75,7 +75,7 @@ export default {
   },
 
   data: () => ({
-    tabs: [{name: 'Tab 1', json: ''}],
+    tabs: [{name: 'Tab 1', json: '', num: 1}],
     tab: 0,
     dynHeight: '',
     darkMode: false,
@@ -85,13 +85,41 @@ export default {
   created() {
     window.addEventListener('resize', this.dynHeightCalc);
     this.dynHeightCalc();
+
+    if(localStorage.getItem('tabs')) {
+      this.tabs = JSON.parse(localStorage.getItem('tabs'))
+      this.currentTabNumber = this.tabs[this.tabs.length - 1].num + 1
+      this.$nextTick(function () {
+        this.$forceUpdate()
+      })
+    }
+
+    if(localStorage.getItem('darkMode')) {
+      if(JSON.parse(localStorage.getItem('darkMode')) != this.darkMode) {
+        this.darkModeToggle()
+      }
+    }
+  },
+
+  mounted() {
+    
+  },
+
+  watch: {
+    tabs: {
+      handler(updated){
+        localStorage.setItem('tabs', JSON.stringify(updated))
+      },
+      deep: true
+    }
   },
 
   methods: {
     tabAdd() {
       this.tabs.push({
         name: 'Tab ' + this.currentTabNumber,
-        json: ''
+        json: '',
+        num: this.currentTabNumber
       })
       this.currentTabNumber++
       this.tab = this.tabs.length - 1
@@ -106,6 +134,7 @@ export default {
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
+      localStorage.setItem('darkMode', JSON.stringify(this.darkMode))
 
       if (this.darkMode) {
         this.$vuetify.theme.dark = true

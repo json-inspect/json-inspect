@@ -7,18 +7,22 @@
 
   export default {
     name: 'tree-view',
-    components: {},
+		components: {},
     props: { json: { type: String }, index: { type: Number } },
     watch: {
       json: function (current) {
+				console.log(current)
         jsonView.format(current, '.tab' + this.index)
-      }
+			}
     },
     computed: {
       name: function () {
         return 'tab' + this.index
-      }
-    }
+			}
+		},
+		mounted() {
+			jsonView.format(this.json, '.tab' + this.index)
+		}
   }
 </script>
 
