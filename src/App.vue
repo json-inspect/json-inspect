@@ -27,7 +27,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text>
+      <v-btn target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P57DMM8WRFLWU&item_name=Help+support+the+server+costs+and+continued+development+associated+with+jsoninspect.com&currency_code=USD&source=url" text>
         <v-icon class="mr-2">mdi-gift-outline</v-icon>  Donate
       </v-btn>
 
