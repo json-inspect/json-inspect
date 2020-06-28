@@ -11,7 +11,6 @@
     props: { json: { type: String }, index: { type: Number } },
     watch: {
       json: function (current) {
-				console.log(current)
         jsonView.format(current, '.tab' + this.index)
 			}
     },

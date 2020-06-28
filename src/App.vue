@@ -14,10 +14,12 @@
         <v-tab
           v-for="(tab, i) in tabs"
           :key="i"
+          @contextmenu.prevent="showTabMenu"
+          :class="'tabb' + i"
         >
           {{tab.name}}
-          <v-btn class="ml-2" x-small @click.stop="remove(i)" icon>
-            <v-icon >mdi-close</v-icon>
+          <v-btn class="ml-2" small @click.stop="remove(i)" icon>
+            <v-icon x-small >mdi-close</v-icon>
           </v-btn>
         </v-tab>
         <v-btn small @click="tabAdd" class="mt-5" icon>
@@ -61,6 +63,19 @@
         </v-tab-item>
       </v-tabs-items>
     </v-main>
+    <v-menu
+      :position-x="tabMenuX"
+      :position-y="tabMenuY"
+      absolute
+      offset-y
+      v-model="tabMenu"
+    >
+      <v-list>
+        <v-list-item @click="closeAll">
+          <v-list-item-title>Close all tabs</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-app>
 </template>
 
@@ -79,7 +94,10 @@ export default {
     tab: 0,
     dynHeight: '',
     darkMode: false,
-    currentTabNumber: 2
+    currentTabNumber: 2,
+    tabMenu: false,
+    tabMenuX: 0,
+    tabMenuY: 0
   }),
 
   created() {
@@ -88,7 +106,7 @@ export default {
 
     if(localStorage.getItem('tabs')) {
       this.tabs = JSON.parse(localStorage.getItem('tabs'))
-      this.currentTabNumber = this.tabs[this.tabs.length - 1].num + 1
+      if(this.tabs.length != 0) this.currentTabNumber = this.tabs[this.tabs.length - 1].num + 1
       this.$nextTick(function () {
         this.$forceUpdate()
       })
@@ -128,9 +146,12 @@ export default {
       if(i < this.tab) this.tab--
       this.tabs.splice(i, 1)
     },
+    closeAll() {
+      this.tabs.splice(0, this.tabs.length)
+    },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 130) + 'px'
+      this.dynHeight = (vh100 - 140) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -141,6 +162,15 @@ export default {
       } else {
         this.$vuetify.theme.dark = false
       }
+    },
+    showTabMenu(e) {
+      e.preventDefault()
+        this.tabMenu = false
+        this.tabMenuX = e.clientX
+        this.tabMenuY = e.clientY
+        this.$nextTick(() => {
+          this.tabMenu = true
+      })
     }
   },
 
@@ -152,7 +182,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 130px);
+  height: calc(100vh - 140px);
   overflow: auto;
 }
 </style>
