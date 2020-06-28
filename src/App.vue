@@ -14,7 +14,7 @@
         <v-tab
           v-for="(tab, i) in tabs"
           :key="i"
-          @contextmenu.prevent="showTabMenu"
+          @contextmenu.prevent="showTabMenu(i, $event)"
           :class="'tabb' + i"
         >
           {{tab.name}}
@@ -71,6 +71,24 @@
       v-model="tabMenu"
     >
       <v-list>
+        <v-list-item @click="duplicate(tabMenuSpawnedFromIndex)">
+          <v-list-item-title>Duplicate this tab</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click="remove(tabMenuSpawnedFromIndex)">
+          <v-list-item-title>Close this tab</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click="closeLeft(tabMenuSpawnedFromIndex)">
+          <v-list-item-title>Close all tabs to the left</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="closeRight(tabMenuSpawnedFromIndex)">
+          <v-list-item-title>Close all tabs to the right</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="closeOthers(tabMenuSpawnedFromIndex)">
+          <v-list-item-title>Close all other tabs</v-list-item-title>
+        </v-list-item>
+        <v-divider></v-divider>
         <v-list-item @click="closeAll">
           <v-list-item-title>Close all tabs</v-list-item-title>
         </v-list-item>
@@ -97,7 +115,8 @@ export default {
     currentTabNumber: 2,
     tabMenu: false,
     tabMenuX: 0,
-    tabMenuY: 0
+    tabMenuY: 0,
+    tabMenuSpawnedFromIndex: 0
   }),
 
   created() {
@@ -142,6 +161,25 @@ export default {
       this.currentTabNumber++
       this.tab = this.tabs.length - 1
     },
+    duplicate(i) {
+      this.tabs.splice(i+1,0,{
+        name: 'Tab ' + this.currentTabNumber,
+        json: this.tabs[i].json,
+        num: this.currentTabNumber
+      })
+      this.currentTabNumber++
+      this.tab = i + 1
+    },
+    closeLeft(i) {
+      this.tabs.splice(0, i)
+    },
+    closeRight(i) {
+      this.tabs.splice(i + 1)
+    },
+    closeOthers(i) {
+      this.closeLeft(i)
+      this.closeRight(0)
+    },
     remove(i) {
       if(i < this.tab) this.tab--
       this.tabs.splice(i, 1)
@@ -163,13 +201,14 @@ export default {
         this.$vuetify.theme.dark = false
       }
     },
-    showTabMenu(e) {
+    showTabMenu(i, e) {
       e.preventDefault()
-        this.tabMenu = false
-        this.tabMenuX = e.clientX
-        this.tabMenuY = e.clientY
-        this.$nextTick(() => {
-          this.tabMenu = true
+      this.tabMenu = false
+      this.tabMenuSpawnedFromIndex = i
+      this.tabMenuX = e.clientX
+      this.tabMenuY = e.clientY
+      this.$nextTick(() => {
+        this.tabMenu = true
       })
     }
   },
