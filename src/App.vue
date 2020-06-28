@@ -12,7 +12,7 @@
       <v-tabs v-model="tab" show-arrows>
         <v-tab
           v-for="(tab, i) in tabs"
-          :key="tab.name"
+          :key="i"
         >
           {{tab.name}}
           <v-btn class="ml-2" x-small @click.stop="remove(i)" icon>
@@ -38,7 +38,7 @@
       <v-tabs-items v-model="tab">
         <v-tab-item
           v-for="(tab, i) in tabs"
-          :key="tab.name"
+          :key="i"
         >
           <v-row class="ma-4">
             <v-col cols="12" md="6" class="pb-0">
@@ -96,6 +96,7 @@ export default {
       this.tab = this.tabs.length - 1
     },
     remove(i) {
+      if(i < this.tab) this.tab--
       this.tabs.splice(i, 1)
     },
     dynHeightCalc() {
