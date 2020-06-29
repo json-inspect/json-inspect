@@ -6,34 +6,40 @@
       dark
     >
       <div class="d-flex align-center mr-4">
-        <v-icon class="mr-2">mdi-cloud-braces</v-icon>
+        <v-icon class="ml-3 mr-2">mdi-cloud-braces</v-icon>
         <v-toolbar-title>JSON Inspect</v-toolbar-title>
       </div>
 
-      <v-tabs v-model="tab" show-arrows>
-        <v-tab
-          v-for="(tab, i) in tabs"
-          :key="i"
-          @contextmenu.prevent="showTabMenu(i, $event)"
-          :class="'tabb' + i"
-        >
-          {{tab.name}}
-          <v-btn class="ml-2" small @click.stop="remove(i)" icon>
-            <v-icon x-small >mdi-close</v-icon>
+      <template v-slot:extension>
+        <v-tabs class="ml-3" v-model="tab" show-arrows>
+          <v-tab
+            v-for="(tab, i) in tabs"
+            :key="i"
+            @contextmenu.prevent="showTabMenu(i, $event)"
+            :class="'tabb' + i"
+          >
+            {{tab.name}}
+            <v-btn class="ml-2" small @click.stop="remove(i)" icon>
+              <v-icon x-small >mdi-close</v-icon>
+            </v-btn>
+          </v-tab>
+          <v-btn small @click="tabAdd" class="mt-2 ml-2" icon>
+            <v-icon small>mdi-plus</v-icon>
           </v-btn>
-        </v-tab>
-        <v-btn small @click="tabAdd" class="mt-5" icon>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </v-tabs>
+        </v-tabs>
+      </template>
 
       <v-spacer></v-spacer>
 
-      <v-btn target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P57DMM8WRFLWU&item_name=Help+support+the+server+costs+and+continued+development+associated+with+jsoninspect.com&currency_code=USD&source=url" text>
+      <v-btn small target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P57DMM8WRFLWU&item_name=Help+support+the+server+costs+and+continued+development+associated+with+jsoninspect.com&currency_code=USD&source=url" text>
         <v-icon class="mr-2">mdi-gift-outline</v-icon>  Donate
       </v-btn>
 
-      <v-btn @click="darkModeToggle" text>
+      <v-btn small target="_blank" href="https://twitter.com/messages/compose?recipient_id=1255587745" text>
+        <v-icon class="mr-2">mdi-twitter</v-icon>  Contact us
+      </v-btn>
+
+      <v-btn small @click="darkModeToggle" text>
         <v-icon class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
       </v-btn>
     </v-app-bar>
@@ -45,17 +51,20 @@
         >
           <v-row class="ma-4">
             <v-col cols="12" md="6" class="pb-0">
+              <v-card @click="noop" class="ad pa-8">
+                <p class="text-center white--text">Your banner ad here, please contact us today.</p>
+              </v-card>
               <v-textarea
                 solo
                 no-resize=""
                 :height="dynHeight"
                 label="Copy/paste valid JSON here"
                 v-model="tab.json"
-                class="mb-0"
+                class="mb-0 mt-3"
               ></v-textarea>
             </v-col>
             <v-col cols="12" md="6" class="pb-0">
-              <v-card class="pa-2 cheightf">
+              <v-card class="pa-2 cheightf cscroll">
                 <tree-view :index="i" :json="tab.json" />
               </v-card>
             </v-col>
@@ -152,6 +161,9 @@ export default {
   },
 
   methods: {
+    noop() {
+      console.log('noop')
+    },
     tabAdd() {
       this.tabs.push({
         name: 'Tab ' + this.currentTabNumber,
@@ -189,7 +201,7 @@ export default {
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 140) + 'px'
+      this.dynHeight = (vh100 - 290) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -221,7 +233,19 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 140px);
+  height: calc(100vh - 190px);
   overflow: auto;
+}
+.ad {
+  height: 90px;
+  background: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+
+  p {
+    font-size: 1.4em;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 </style>
