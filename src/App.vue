@@ -52,21 +52,39 @@
           <v-row class="ma-4">
             <v-col cols="12" md="6" class="pb-0">
               <v-card @click="noop" class="ad pa-8">
-                <p class="text-center white--text">Your banner ad here, please contact us today.</p>
+                <p class="text-center white--text">Your ad could be here, please contact us today!</p>
               </v-card>
               <v-textarea
                 solo
                 no-resize=""
                 :height="dynHeight"
-                label="Copy/paste valid JSON here"
+                label="Please drag/drop a JSON file or paste valid JSON here..."
                 v-model="tab.json"
-                class="mb-0 mt-3"
+                class="mb-0 mt-5"
+                :class="'ta' + i"
+                @drop.prevent="processFile" 
+                @dragover.prevent
               ></v-textarea>
+              <v-row class="ml-1">
+                <span class="font-weight-bold">JSON Source Actions:</span>
+                <v-btn @click="beautify(i)" class="ml-3 mr-3" small="" outlined>Beautify</v-btn>
+                <v-btn @click="minify(i)" class="mr-3" small="" outlined>Minify</v-btn>
+                <v-btn @click="copy(i)" class="mr-3" small="" outlined>Copy</v-btn>
+                <v-btn @click="clear(i)" small="" outlined>Clear</v-btn>
+              </v-row>
             </v-col>
             <v-col cols="12" md="6" class="pb-0">
               <v-card class="pa-2 cheightf cscroll">
                 <tree-view :index="i" :json="tab.json" />
               </v-card>
+              <v-row class="mt-3 ml-1">
+                <span class="font-weight-bold">Key:</span>
+                <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
+                <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
+                <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
+                <span class="ml-3">[n] Array of n items</span>
+                <span class="ml-3">{n} Object with n entries</span>
+              </v-row>
             </v-col>
           </v-row>
         </v-tab-item>
@@ -107,6 +125,8 @@
 </template>
 
 <script>
+import minifyJSON from './assets/js/minify.json'
+
 import TreeView from './components/TreeView.vue'
 
 export default {
@@ -201,7 +221,7 @@ export default {
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 290) + 'px'
+      this.dynHeight = (vh100 - 340) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -222,6 +242,43 @@ export default {
       this.$nextTick(() => {
         this.tabMenu = true
       })
+    },
+    processFile(e) {
+      let droppedFiles = e.dataTransfer.files;
+      if(!droppedFiles) return;
+      let f = droppedFiles[0]
+
+      if (!f.type.match('application/json')) {
+        return;
+      }
+
+      let context = this
+
+      let reader = new FileReader();
+      reader.onloadend = function() {
+        context.tabs[context.tab].json = this.result
+      };
+      reader.readAsText(f);
+    },
+    beautify(i) {
+      this.tabs[i].json = JSON.stringify(JSON.parse(this.tabs[i].json), null, 4)
+    },
+    minify(i) {
+      this.tabs[i].json = minifyJSON(this.tabs[i].json)
+    },
+    copy(i) {
+      const el = document.createElement('textarea');
+      el.value = this.tabs[i].json;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    },
+    clear(i) {
+      this.tabs[i].json = ''
     }
   },
 
@@ -233,7 +290,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 190px);
+  height: calc(100vh - 210px);
   overflow: auto;
 }
 .ad {
@@ -241,7 +298,7 @@ export default {
   background: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
 
   p {
-    font-size: 1.4em;
+    font-size: 1.2em;
   }
 
   &:hover {
