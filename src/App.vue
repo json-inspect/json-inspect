@@ -56,11 +56,12 @@
               </v-card>
               <v-card class="mt-5">
                 <v-card-actions>
-                  <span class="font-weight-bold">JSON Source Actions:</span>
-                <v-btn @click="beautify(i)" class="ml-3 mr-3" small="" outlined="">Beautify</v-btn>
-                <v-btn @click="minify(i)" class="mr-3" small="" outlined>Minify</v-btn>
-                <v-btn @click="copy(i)" class="mr-3" small="" outlined>Copy</v-btn>
-                <v-btn @click="clear(i)" small="" outlined>Clear</v-btn>
+                  <span class="font-weight-bold">Source:</span>
+                  <v-btn @click="load(i)" class="ml-3 mr-3" small="" outlined="">Download</v-btn>
+                  <v-btn @click="beautify(i)" class="ml-3 mr-3" small="" outlined="">Beautify</v-btn>
+                  <v-btn @click="minify(i)" class="mr-3" small="" outlined>Minify</v-btn>
+                  <v-btn @click="copy(i)" class="mr-3" small="" outlined>Copy</v-btn>
+                  <v-btn @click="clear(i)" small="" outlined>Clear</v-btn>
                 </v-card-actions>
                 <v-divider></v-divider>
                 <v-textarea
@@ -271,6 +272,19 @@ export default {
         context.tabs[context.tab].json = this.result
       };
       reader.readAsText(f);
+    },
+    load(i) {
+      //console.log(i)
+
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(this.tabs[i].json);
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("download", "inspect.json");
+      downloadAnchorNode.style.position = 'absolute';
+      downloadAnchorNode.style.left = '-9999px';
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
     },
     beautify(i) {
       this.tabs[i].json = JSON.stringify(JSON.parse(this.tabs[i].json), null, 4)
