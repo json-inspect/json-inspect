@@ -51,7 +51,7 @@
         >
           <v-row class="ma-4">
             <v-col cols="12" md="6" class="pb-0">
-              <v-card @click="noop" class="ad pa-8">
+              <v-card target="_blank" href="https://twitter.com/messages/compose?recipient_id=1255587745&text=I%27m%20interested%20in%20advertising%20my%20product%20or%20service%20on%20jsoninspect.com%2C%20and%20would%20love%20to%20get%20in%20touch%20with%20you." class="ad pa-8">
                 <p class="text-center white--text">Your ad could be here, please contact us today!</p>
               </v-card>
               <v-card class="mt-5">
