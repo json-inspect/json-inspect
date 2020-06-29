@@ -54,37 +54,41 @@
               <v-card @click="noop" class="ad pa-8">
                 <p class="text-center white--text">Your ad could be here, please contact us today!</p>
               </v-card>
-              <v-textarea
-                solo
-                no-resize=""
-                :height="dynHeight"
-                label="Please drag/drop a JSON file or paste valid JSON here..."
-                v-model="tab.json"
-                class="mb-0 mt-5"
-                :class="'ta' + i"
-                @drop.prevent="processFile" 
-                @dragover.prevent
-              ></v-textarea>
-              <v-row class="ml-1">
-                <span class="font-weight-bold">JSON Source Actions:</span>
-                <v-btn @click="beautify(i)" class="ml-3 mr-3" small="" outlined>Beautify</v-btn>
+              <v-card class="mt-5">
+                <v-card-actions>
+                  <span class="font-weight-bold">JSON Source Actions:</span>
+                <v-btn @click="beautify(i)" class="ml-3 mr-3" small="" outlined="">Beautify</v-btn>
                 <v-btn @click="minify(i)" class="mr-3" small="" outlined>Minify</v-btn>
                 <v-btn @click="copy(i)" class="mr-3" small="" outlined>Copy</v-btn>
                 <v-btn @click="clear(i)" small="" outlined>Clear</v-btn>
-              </v-row>
+                </v-card-actions>
+                <v-divider></v-divider>
+                <v-textarea
+                  outlined
+                  no-resize=""
+                  :height="dynHeight"
+                  label="Please drag/drop a JSON file or paste valid JSON here..."
+                  v-model="tab.json"
+                  class="mb-0 mt-2 mx-2"
+                  :class="'ta' + i"
+                  @drop.prevent="processFile" 
+                  @dragover.prevent
+                ></v-textarea>
+              </v-card>
             </v-col>
             <v-col cols="12" md="6" class="pb-0">
               <v-card class="pa-2 cheightf cscroll">
+                <v-card-actions>
+                  <span class="font-weight-bold">Key:</span>
+                  <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
+                  <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
+                  <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
+                  <span class="ml-3">[n] Array of n items</span>
+                  <span class="ml-3">{n} Object with n entries</span>
+                </v-card-actions>
+                <v-divider></v-divider>
                 <tree-view :index="i" :json="tab.json" />
               </v-card>
-              <v-row class="mt-3 ml-1">
-                <span class="font-weight-bold">Key:</span>
-                <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
-                <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
-                <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
-                <span class="ml-3">[n] Array of n items</span>
-                <span class="ml-3">{n} Object with n entries</span>
-              </v-row>
             </v-col>
           </v-row>
         </v-tab-item>
@@ -215,13 +219,21 @@ export default {
     remove(i) {
       if(i < this.tab) this.tab--
       this.tabs.splice(i, 1)
+
+      if(this.tabs.length == 0) {
+        this.currentTabNumber = 1
+        this.tabAdd()
+      }
     },
     closeAll() {
       this.tabs.splice(0, this.tabs.length)
+
+      this.currentTabNumber = 1
+      this.tabAdd()
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 340) + 'px'
+      this.dynHeight = (vh100 - 363) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -290,7 +302,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 170px);
   overflow: auto;
 }
 .ad {
