@@ -56,6 +56,7 @@
               
               <v-card class="pa-2">
                 <v-card-actions>
+                  <v-icon :title="validJSON().text" small class="ml-1 mr-1" :color="validJSON().color">mdi-circle</v-icon> 
                   <v-spacer></v-spacer>
                   <!--<v-btn @click="load(i)" class="" small="" outlined="">Load URL</v-btn>-->                  
                   <v-btn @click="beautify(i)" class="" small="" text>Beautify</v-btn>
@@ -375,6 +376,22 @@ export default {
     },
     loadExampleData(i) {
       this.tabs[i].json = JSON.stringify(exampleData, null, 4)
+    },
+    validJSON: function () {
+      // `this` points to the vm instance
+      let source = this.tabs[this.tab].json
+      
+      if(source == '') return {color: '#aaa', text: 'No input'}
+
+      let valid = {color: '#86b25c', text: 'Valid JSON'}
+
+      try {
+        JSON.parse(source)
+      } catch {
+        valid = {color: '#ec5f66', text: 'Invalid JSON'}
+      }
+
+      return valid
     }
   },
 
