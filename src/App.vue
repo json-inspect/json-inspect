@@ -112,6 +112,12 @@
                 <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
                 <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
               </v-layout>
+              <v-progress-circular
+                  v-if="loadingURL"
+                  indeterminate
+                  style="position: absolute; right: 30px; bottom: 30px;"
+                  color="primary"
+                ></v-progress-circular>
             </v-col>
             <v-col cols="12" md="2">
               <v-card class="cheightf ad pa-8" target="_blank" href="https://twitter.com/messages/compose?recipient_id=1255587745&text=I%27m%20interested%20in%20advertising%20my%20product%20or%20service%20on%20jsoninspect.com%2C%20and%20would%20love%20to%20get%20in%20touch%20with%20you.">
@@ -222,7 +228,8 @@ export default {
     tabMenu: false,
     tabMenuX: 0,
     tabMenuY: 0,
-    tabMenuSpawnedFromIndex: 0
+    tabMenuSpawnedFromIndex: 0,
+    loadingURL: false
   }),
 
   created() {
@@ -261,9 +268,11 @@ export default {
 
   methods: {
     url(url) {
+      this.loadingURL = true
       url = (url.includes('http://')) ? url.replace('http://', 'https://') : url
       fetch(url).then(resp => { return resp.json() }).then((data) => {
         this.tabAddWithData(data)
+        this.loadingURL = false
       })
     },
     noop() {
