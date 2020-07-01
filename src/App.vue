@@ -261,6 +261,7 @@ export default {
 
   methods: {
     url(url) {
+      url = (url.includes('http://')) ? url.replace('http://', 'https://') : url
       fetch(url).then(resp => { return resp.json() }).then((data) => {
         this.tabAddWithData(data)
       })
