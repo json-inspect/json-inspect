@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import jsonView from '../assets/js/jsonview.js'
+	import jsonView from '../assets/js/jsonview.js'
 
   export default {
     name: 'tree-view',
@@ -18,6 +18,9 @@
       name: function () {
         return 'tab' + this.index
 			}
+		},
+		methods: {
+			
 		},
 		mounted() {
 			jsonView.format(this.json, '.tab' + this.index)
@@ -106,5 +109,14 @@ body {
 .fa-caret-right {
 	border-width: 5px 0 5px 6px;
 	border-color: transparent transparent transparent #808080;
+}
+
+.url {
+	text-decoration: underline;
+}
+
+.url:hover {
+	cursor: pointer;
+	color: #688b47;
 }
 </style>

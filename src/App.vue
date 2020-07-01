@@ -170,6 +170,8 @@ import minifyJSON from './assets/js/minify.json'
 
 import TreeView from './components/TreeView.vue'
 
+import { EventBus } from './assets/js/event.js';
+
 const exampleData = {
 	"name": "Luke Skywalker",
 	"height": 172,
@@ -243,7 +245,9 @@ export default {
   },
 
   mounted() {
-    
+    EventBus.$on('openURL', (url) => {
+      this.url(url)
+    });
   },
 
   watch: {
@@ -256,6 +260,11 @@ export default {
   },
 
   methods: {
+    url(url) {
+      fetch(url).then(resp => { return resp.json() }).then((data) => {
+        this.tabAddWithData(data)
+      })
+    },
     noop() {
       console.log('noop')
     },
@@ -263,6 +272,15 @@ export default {
       this.tabs.push({
         name: 'Tab ' + this.currentTabNumber,
         json: '',
+        num: this.currentTabNumber
+      })
+      this.currentTabNumber++
+      this.tab = this.tabs.length - 1
+    },
+    tabAddWithData(data) {
+      this.tabs.push({
+        name: 'Tab ' + this.currentTabNumber,
+        json: JSON.stringify(data, null, 4),
         num: this.currentTabNumber
       })
       this.currentTabNumber++

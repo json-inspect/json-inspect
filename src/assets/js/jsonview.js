@@ -1,4 +1,17 @@
 'use strict'
+
+import { EventBus } from './event.js';
+
+function isURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return !!pattern.test(str);
+}
+
 /**
    * Create html element
    * @param {String} type html element
@@ -17,6 +30,12 @@ function createElement (type, config) {
 
   if (config.content) {
     htmlElement.textContent = config.content
+  }
+
+  if(config.className.includes('url')) {
+    htmlElement.onclick = function() {
+      EventBus.$emit('openURL', config.content);
+    }
   }
 
   if (config.children) {
@@ -117,9 +136,10 @@ function createNotExpandedElement (node) {
   })
 
   const valueType = ' json-' + typeof node.value
+  const urlUnderline = (typeof node.value == 'string' && isURL(node.value)) ? ' url' : ''
   const valueContent = String(node.value)
   const valueElement = createElement('div', {
-    className: 'json-value' + valueType,
+    className: 'json-value' + valueType + urlUnderline,
     content: valueContent
   })
 
