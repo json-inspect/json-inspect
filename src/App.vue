@@ -45,7 +45,7 @@
         <v-icon small class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
       </v-btn>
     </v-app-bar>
-    <v-main>
+    <v-main class="pb-4">
       <v-tabs-items v-model="tab">
         <v-tab-item
           v-for="(tab, i) in tabs"
@@ -88,14 +88,15 @@
                     </v-list>
                   </v-menu>
                 </v-card-actions>
-                <v-divider></v-divider>
+                
                 <v-textarea
                   outlined
                   no-resize=""
                   :height="dynHeight"
                   label="Please drag/drop a JSON file or paste valid JSON here..."
                   v-model="tab.json"
-                  class="mb-0 mt-3 mx-2"
+                  class="mt-0 mx-2 cscroll"
+                  style="margin-bottom: -20px;"
                   :class="'ta' + i"
                   @drop.prevent="processFile" 
                   @dragover.prevent
@@ -157,6 +158,10 @@
         
       </v-list>
     </v-menu>
+    <v-footer absolute="" color="transparent" class="my-0 px-7" style="font-size: 0.9em;" app>
+      <v-spacer></v-spacer>
+      <div>Made with ❤️ by Emily Carlsen · Open source software <v-btn icon target="_blank" href="https://github.com/json-inspect"><v-icon >mdi-github</v-icon></v-btn> · <a target="_blank" href="http://json.org">json.org</a></div>
+    </v-footer>
   </v-app>
 </template>
 
@@ -299,7 +304,7 @@ export default {
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 243) + 'px'
+      this.dynHeight = (vh100 - 245) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -403,7 +408,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 140px);
+  height: calc(100vh - 175px);
   overflow: auto;
 }
 .ad {
@@ -424,5 +429,51 @@ export default {
   padding: 20px;
   top: 10px;
   right: 10px;
+}
+
+.cscroll {
+  &::-webkit-scrollbar {
+    width: 14px;
+    height: 18px;
+  }
+  &::-webkit-scrollbar-thumb {
+      height: 6px;
+      border: 4px solid rgba(0, 0, 0, 0);
+      background-clip: padding-box;
+      -webkit-border-radius: 7px;
+      background-color: rgba(0, 0, 0, 0.45);
+      //-webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+  &::-webkit-scrollbar-button {
+      width: 0;
+      height: 0;
+      display: none;
+  }
+  &::-webkit-scrollbar-corner {
+      background-color: transparent;
+  }
+
+  &::v-deep textarea {
+    &::-webkit-scrollbar {
+      width: 14px;
+      height: 18px;
+    }
+    &::-webkit-scrollbar-thumb {
+        height: 6px;
+        border: 4px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        -webkit-border-radius: 7px;
+        background-color: rgba(0, 0, 0, 0.45);
+        //-webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+    }
+    &::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+        display: none;
+    }
+    &::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+  }
 }
 </style>
