@@ -40,7 +40,7 @@
 		},
 		data: () => ({
 			tree: null,
-			expanded: true
+			expanded: false
 		}),
 		mounted() {
 			this.tree = jsonView.format(this.json, '.tab' + this.index)
@@ -49,16 +49,20 @@
 </script>
 
 <style>
-body {
+/*body {
 	font-family: 'Open Sans';
 	font-size: 16px;
 	background-color: #fff;
 	color: #808080;
 	box-sizing: border-box;
+}*/
+
+.root {
+	font-size: 0.95em;
 }
 
 .line {
-	margin: 4px 0;
+	margin: 2px 0;
 	display: flex;
 	justify-content: flex-start;
 }

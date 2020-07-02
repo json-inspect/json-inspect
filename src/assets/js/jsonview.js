@@ -12,6 +12,10 @@ function isURL(str) {
   return !!pattern.test(str);
 }
 
+/*function isDate(date) {
+  return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+}*/
+
 /**
    * Create html element
    * @param {String} type html element
@@ -29,7 +33,10 @@ function createElement (type, config) {
   }
 
   if (config.content) {
-    htmlElement.textContent = config.content
+    if(config.typeOf == 'string') htmlElement.textContent = '"' + config.content + '"'
+    else htmlElement.textContent = config.content
+
+    if(config.date && config.date.length > 0) htmlElement.textContent += ' ---> ' + config.date + ''
   }
 
   if(config.className.includes('url')) {
@@ -137,10 +144,13 @@ function createNotExpandedElement (node) {
 
   const valueType = ' json-' + typeof node.value
   const urlUnderline = (typeof node.value == 'string' && isURL(node.value)) ? ' url' : ''
+  //const dateStr = (typeof node.value == 'string' && !isURL(node.value) && isDate(node.value)) ? new Date(node.value).toString() : ''
   const valueContent = String(node.value)
   const valueElement = createElement('div', {
     className: 'json-value' + valueType + urlUnderline,
-    content: valueContent
+    content: valueContent,
+    typeOf: typeof node.value,
+    date: ''
   })
 
   const lineElem = createElement('div', {

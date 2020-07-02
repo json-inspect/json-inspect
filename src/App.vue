@@ -41,7 +41,7 @@
         <v-icon small class="mr-2">mdi-twitter</v-icon>  Contact us
       </v-btn>
 
-      <v-btn small @click="darkModeToggle" text>
+      <v-btn class="mr-1" small @click="darkModeToggle" text>
         <v-icon small class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
       </v-btn>
     </v-app-bar>
@@ -75,13 +75,22 @@
                       </v-btn>
                     </template>
                     <v-list>
-                      <v-list-item :disabled="disabled" @click="download(i)" >
-                        <v-list-item-title>Download</v-list-item-title>
-                      </v-list-item>
                       <v-list-item :disabled="disabled" @click="copy(i)" >
-                        <v-list-item-title>Copy</v-list-item-title>
+                        <v-list-item-title>Copy all</v-list-item-title>
                       </v-list-item>
+                      <v-list-item :disabled="disabled" @click="download(i)" >
+                        <v-list-item-title>Download JSON</v-list-item-title>
+                      </v-list-item>
+                      <!--<v-list-item :disabled="disabled" @click="downloadXML(i)" >
+                        <v-list-item-title>Download as XML</v-list-item-title>
+                      </v-list-item>-->
                       <v-divider></v-divider>
+                      <!--<v-list-item @click="noop()" >
+                        <v-list-item-title>Load from URL</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="noop()" >
+                        <v-list-item-title>Load from file</v-list-item-title>
+                      </v-list-item>-->
                       <v-list-item @click="loadExampleData(i)" >
                         <v-list-item-title>Load example data</v-list-item-title>
                       </v-list-item>
@@ -105,13 +114,13 @@
             </v-col>
             <v-col cols="12" md="5" class="pb-0" style="position: relative;">
               <v-card class="pa-2 cheightf cscroll" >
-                <v-card-actions>
-                  <v-btn :disabled="disabled" @click="expandCollapseAll" class="" small="" text>{{expandCollButton()}}</v-btn>
+                <v-card-actions style="overflow: hidden;">
+                  <v-btn :disabled="disabled" @click="expandCollapseAll" class="" small="" text>{{expandCollButton()}} All</v-btn>
                   <v-layout style="font-size: 0.9em;" class="key">
                     <v-spacer></v-spacer>
-                    <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
-                    <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
-                    <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
+                    <v-icon small class="ml-2 mr-1" color="#86b25c">mdi-circle</v-icon> String
+                    <v-icon small class="ml-2 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
+                    <v-icon small class="ml-2 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
                   </v-layout>
                 </v-card-actions>
                 <v-divider></v-divider>
@@ -239,7 +248,7 @@ export default {
     tabMenuY: 0,
     tabMenuSpawnedFromIndex: 0,
     loadingURL: false,
-    expanded: true
+    expanded: false
   }),
 
   created() {
@@ -277,6 +286,55 @@ export default {
   },
 
   methods: {
+    OBJtoXML(json) {
+      var self = this
+      var util = require('util')
+
+      let opts = {
+          attributes_key: false,
+          header: false
+      }
+
+      var result = opts.header ? '<?xml version="1.0" encoding="UTF-8"?>' : '';
+      opts.header = false;
+
+      if (json instanceof Array) { //Array
+          json.forEach(function (node) {
+              result += self.OBJtoXML(node);
+          });
+      } else if (typeof json === 'object') {
+          Object.keys(json).forEach(function (key) {
+              if (key !== opts.attributes_key) {
+                  var node = json[key],
+                      attributes = '';
+
+                  if (node === undefined || node === null) {
+                      node = '';
+                  }
+
+                  if (opts.attributes_key && json[opts.attributes_key]) {
+                      Object.keys(json[opts.attributes_key]).forEach(function (k) {
+                          attributes += util.format(' %s="%s"', k, json[opts.attributes_key][k]);
+                      });
+                  }
+                  var inner = self.OBJtoXML(node);
+
+                  if (inner) {
+                      result += util.format("<%s%s>%s</%s>", key, attributes, self.OBJtoXML(node), key);
+                  } else {
+                      result += util.format("<%s%s/>", key, attributes);
+                  }
+              }
+          });
+      } else {
+          if (json.toString().match(/^<!\[CDATA\[.*]]>$/)) {
+              return json.toString();
+          }
+          return json.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      return result;
+    },
     expandCollapseAll() { 
       this.expanded = !this.expanded
       this.$refs.tree[this.tab].expandCollapseAll()
@@ -286,6 +344,9 @@ export default {
       url = (url.includes('http://')) ? url.replace('http://', 'https://') : url
       fetch(url).then(resp => { return resp.json() }).then((data) => {
         this.tabAddWithData(data)
+        this.loadingURL = false
+      }).catch((err) => {
+        console.log(err)
         this.loadingURL = false
       })
     },
@@ -389,12 +450,23 @@ export default {
       console.log(i)
     },
     download(i) {
-      //console.log(i)
-
       var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(this.tabs[i].json);
       var downloadAnchorNode = document.createElement('a');
       downloadAnchorNode.setAttribute("href",     dataStr);
       downloadAnchorNode.setAttribute("download", "inspect.json");
+      downloadAnchorNode.style.position = 'absolute';
+      downloadAnchorNode.style.left = '-9999px';
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    },
+    downloadXML(i) {
+      let dataRaw = this.OBJtoXML(JSON.parse(this.tabs[i].json))
+      let dataStr = "data:text/xml;charset=utf-8," + encodeURIComponent(dataRaw);
+
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("download", "inspect.xml");
       downloadAnchorNode.style.position = 'absolute';
       downloadAnchorNode.style.left = '-9999px';
       document.body.appendChild(downloadAnchorNode); // required for firefox
@@ -501,6 +573,9 @@ export default {
   }
 
   &::v-deep textarea {
+    font-size: 0.95em;
+    line-height: 1.6em;
+
     &::-webkit-scrollbar {
       width: 14px;
       height: 18px;
