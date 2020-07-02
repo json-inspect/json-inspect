@@ -11,7 +11,7 @@
     props: { json: { type: String }, index: { type: Number } },
     watch: {
       json: function (current) {
-        jsonView.format(current, '.tab' + this.index)
+        this.tree = jsonView.format(current, '.tab' + this.index)
 			}
     },
     computed: {
@@ -20,10 +20,30 @@
 			}
 		},
 		methods: {
-			
+			expandCollapseAll: function () {
+				this.expanded = !this.expanded
+				this.expandCollapseRecursive(this.tree)
+			},
+			expandCollapseRecursive: function(tree) {
+				//console.log(tree)
+				if(tree.children == null) return
+
+				tree.children.forEach((branch) => {
+					if(branch.children != null) {
+						this.expandCollapseRecursive(branch)
+						if(branch.expanded != this.expanded) branch.toggle()
+					}
+				})
+
+				if(tree.expanded != this.expanded) tree.toggle()
+			}
 		},
+		data: () => ({
+			tree: null,
+			expanded: true
+		}),
 		mounted() {
-			jsonView.format(this.json, '.tab' + this.index)
+			this.tree = jsonView.format(this.json, '.tab' + this.index)
 		}
   }
 </script>

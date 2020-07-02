@@ -59,9 +59,9 @@
                   <v-icon :title="validJSON().text" small class="ml-1 mr-1" :color="validJSON().color">mdi-circle</v-icon> 
                   <v-spacer></v-spacer>
                   <!--<v-btn @click="load(i)" class="" small="" outlined="">Load URL</v-btn>-->                  
-                  <v-btn @click="beautify(i)" class="" small="" text>Beautify</v-btn>
-                  <v-btn @click="minify(i)" class="" small="" text>Minify</v-btn>
-                  <v-btn @click="clear(i)" class="" small="" text>Clear</v-btn>
+                  <v-btn :disabled="disabled" @click="beautify(i)" class="" small="" text>Beautify</v-btn>
+                  <v-btn :disabled="disabled" @click="minify(i)" class="" small="" text>Minify</v-btn>
+                  <v-btn :disabled="disabled" @click="clear(i)" class="" small="" text>Clear</v-btn>
                   <v-menu  offset-y>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -75,10 +75,10 @@
                       </v-btn>
                     </template>
                     <v-list>
-                      <v-list-item @click="download(i)" >
+                      <v-list-item :disabled="disabled" @click="download(i)" >
                         <v-list-item-title>Download</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="copy(i)" >
+                      <v-list-item :disabled="disabled" @click="copy(i)" >
                         <v-list-item-title>Copy</v-list-item-title>
                       </v-list-item>
                       <v-divider></v-divider>
@@ -105,13 +105,22 @@
             </v-col>
             <v-col cols="12" md="5" class="pb-0" style="position: relative;">
               <v-card class="pa-2 cheightf cscroll" >
-                <tree-view :index="i" :json="tab.json" />
+                <v-card-actions>
+                  <v-btn :disabled="disabled" @click="expandCollapseAll" class="" small="" text>{{expandCollButton()}}</v-btn>
+                  <v-layout style="font-size: 0.9em;" class="key">
+                    <v-spacer></v-spacer>
+                    <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
+                    <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
+                    <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
+                  </v-layout>
+                </v-card-actions>
+                <v-divider></v-divider>
+                <div class="scroll cscroll">
+                  <tree-view ref="tree" :index="i" :json="tab.json" />
+                </div>
+                
               </v-card>
-              <v-layout class="key">
-                <v-icon small class="ml-3 mr-1" color="#86b25c">mdi-circle</v-icon> String
-                <v-icon small class="ml-3 mr-1" color="#f9ae58">mdi-circle</v-icon> Number
-                <v-icon small class="ml-3 mr-1" color="#ec5f66">mdi-circle</v-icon> Boolean
-              </v-layout>
+              
               <v-progress-circular
                   v-if="loadingURL"
                   indeterminate
@@ -229,7 +238,8 @@ export default {
     tabMenuX: 0,
     tabMenuY: 0,
     tabMenuSpawnedFromIndex: 0,
-    loadingURL: false
+    loadingURL: false,
+    expanded: true
   }),
 
   created() {
@@ -267,6 +277,10 @@ export default {
   },
 
   methods: {
+    expandCollapseAll() { 
+      this.expanded = !this.expanded
+      this.$refs.tree[this.tab].expandCollapseAll()
+    },
     url(url) {
       this.loadingURL = true
       url = (url.includes('http://')) ? url.replace('http://', 'https://') : url
@@ -425,11 +439,16 @@ export default {
       }
 
       return valid
+    },
+    expandCollButton: function() {
+      return (this.expanded) ? 'Collapse' : 'Expand'
     }
   },
 
   computed: {
-    
+    disabled: function() {
+      return this.tabs[this.tab].json.length == 0
+    }
   }
 };
 </script>
@@ -437,7 +456,10 @@ export default {
 <style lang="scss" scoped>
 .cheightf {
   height: calc(100vh - 175px);
+}
+.scroll {
   overflow: auto;
+  height: calc(100% - 50px);
 }
 .ad {
   //height: 90px;
@@ -453,10 +475,7 @@ export default {
 }
 
 .key {
-  position: absolute;
-  padding: 20px;
-  top: 10px;
-  right: 10px;
+  
 }
 
 .cscroll {

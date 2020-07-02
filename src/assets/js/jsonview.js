@@ -353,8 +353,9 @@ export default {
       if (typeof jsonData === 'string' || jsonData instanceof String) parsedData = JSON.parse(jsonData)
       const tree = createTree(parsedData)
       render(tree, targetElem)
+      return tree
     } catch (e) {
       console.log('Invalid JSON Found')
     }
-  }
+  },
 }
