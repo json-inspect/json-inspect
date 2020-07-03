@@ -37,7 +37,7 @@ function createElement (type, config) {
     if(config.typeOf == 'string') htmlElement.textContent = '"' + config.content + '"'
     else htmlElement.textContent = config.content
 
-    if(config.date && config.date.length > 0) htmlElement.textContent += ' ---> ' + config.date + ''
+    if(config.date && config.date.length > 0) htmlElement.innerHTML += '<img style="margin-left: 5px;" height="12px" title="' + config.date + '" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVQ4T53TvUoeQBCF4Uct0qQTQRsTwXgHeg0SEGyCGLwD/yAWWgQtVLBTg8FcQFBSB0GxTqm1IEawEkQtJFUihoHdsHzuZ9Qt5+y8OzM7p8X904dB9KAVbfiNn9jFcZnS0pA/hlfp4imukt6e4m8TaCvnlYApnGCnUlUZGkI3PkcwA+Ll60ckZ1BAXmI7ANHzOyxXXp7BLdYq2jy2AhCl/8BB5VIX7nBe0QYwEIBVLBYDK+/Gb0QF+xVAB+YCsI7pJoP7iD9YaaJvBGADE88EbOYWlnBZgTxUQbQwG4DJNMTDJwL60R+ANxhBVNF4PqQZfKpoC/iaF+k9bvD9P1uY5WG8wLdylcdx9ghIJHfiS7nKmTyaWgrXhZkukhADe40w01G8XDNTjvUWdo4yw86/kgv3kuH+dfoX1wk/cpQxqEsAAAAASUVORK5CYII=" />'
   }
 
   if(config.className.includes('url')) {
