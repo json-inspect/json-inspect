@@ -21,7 +21,7 @@
             :class="'tabb' + i"
           >
             {{tab.name}}
-            <v-btn class="ml-2" small @click.stop="remove(i)" icon>
+            <v-btn class="ml-2" small @click.stop="remove(i)" @mousedown.stop="" @touchstart.stop="" icon>
               <v-icon x-small >mdi-close</v-icon>
             </v-btn>
           </v-tab>
