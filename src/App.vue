@@ -203,7 +203,7 @@
     </v-menu>
     <v-footer absolute="" color="transparent" class="my-0 px-7" style="font-size: 0.9em;" app>
       <v-spacer></v-spacer>
-      <div>Made with ❤️ by Emily Carlsen · Open source software <v-btn icon target="_blank" href="https://github.com/json-inspect"><v-icon >mdi-github</v-icon></v-btn> · <a target="_blank" href="http://json.org">json.org</a></div>
+      <div>Made with ❤️ by Emily Carlsen <v-btn icon target="_blank" href="https://twitter.com/emilyplusplus"><v-icon >mdi-twitter</v-icon></v-btn> <v-btn style="margin-left: -10px;" icon target="_blank" href="https://www.instagram.com/emilyplusplus/"><v-icon >mdi-instagram</v-icon></v-btn> <v-btn style="margin-left: -10px;" icon target="_blank" href="https://emilyplusplus.wordpress.com/"><v-icon >mdi-wordpress</v-icon></v-btn> · Open source software <v-btn icon target="_blank" href="https://github.com/json-inspect"><v-icon >mdi-github</v-icon></v-btn> · <a target="_blank" href="http://json.org">json.org</a></div>
     </v-footer>
   </v-app>
 </template>
@@ -276,9 +276,6 @@ export default {
     if(localStorage.getItem('tabs')) {
       this.tabs = JSON.parse(localStorage.getItem('tabs'))
       if(this.tabs.length != 0) this.currentTabNumber = this.tabs[this.tabs.length - 1].num + 1
-      this.$nextTick(function () {
-        this.$forceUpdate()
-      })
     }
 
     if(localStorage.getItem('darkMode')) {
@@ -395,7 +392,10 @@ export default {
         num: this.currentTabNumber
       })
       this.currentTabNumber++
-      this.tab = this.tabs.length - 1
+
+      this.$nextTick(() => {
+        this.tab = this.tabs.length - 1
+      });
     },
     tabAddWithData(data) {
       this.tabs.push({
@@ -404,7 +404,10 @@ export default {
         num: this.currentTabNumber
       })
       this.currentTabNumber++
-      this.tab = this.tabs.length - 1
+
+      this.$nextTick(() => {
+        this.tab = this.tabs.length - 1
+      });
     },
     duplicate(i) {
       this.tabs.splice(i+1,0,{
@@ -413,9 +416,13 @@ export default {
         num: this.currentTabNumber
       })
       this.currentTabNumber++
-      this.tab = i + 1
+
+      this.$nextTick(() => {
+        this.tab = i + 1
+      });
     },
     closeLeft(i) {
+      if(i < this.tab) this.tab--
       this.tabs.splice(0, i)
     },
     closeRight(i) {
@@ -442,7 +449,7 @@ export default {
     },
     dynHeightCalc() {
       let vh100 = Math.round(window.innerHeight)
-      this.dynHeight = (vh100 - 245) + 'px'
+      this.dynHeight = (vh100 - 235) + 'px'
     },
     darkModeToggle() {
       this.darkMode = !this.darkMode
@@ -552,7 +559,8 @@ export default {
     },
     validJSON: function () {
       // `this` points to the vm instance
-      let source = this.tabs[this.tab].json
+      let source = ''
+      if(this.tabs.length > 0 && this.tab < this.tabs.length) source = this.tabs[this.tab].json
       
       if(source == '') return {color: '#aaa', text: 'No input'}
 
@@ -570,7 +578,12 @@ export default {
 
   computed: {
     disabled: function() {
-      return this.tabs[this.tab].json.length == 0
+      if(this.tabs.length > 0 && this.tab < this.tabs.length) {
+        return this.tabs[this.tab].json.length == 0
+      } else {
+        return true
+      }
+      
     }
   }
 };
@@ -578,7 +591,7 @@ export default {
 
 <style lang="scss" scoped>
 .cheightf {
-  height: calc(100vh - 175px);
+  height: calc(100vh - 165px);
 }
 .scroll {
   overflow: auto;
