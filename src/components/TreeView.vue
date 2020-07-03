@@ -20,8 +20,12 @@
 			}
 		},
 		methods: {
-			expandCollapseAll: function () {
-				this.expanded = !this.expanded
+			expandAll: function () {
+				this.expanded = true
+				this.expandCollapseRecursive(this.tree)
+			},
+			collapseAll: function () {
+				this.expanded = false
 				this.expandCollapseRecursive(this.tree)
 			},
 			expandCollapseRecursive: function(tree) {

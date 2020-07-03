@@ -12,9 +12,10 @@ function isURL(str) {
   return !!pattern.test(str);
 }
 
-/*function isDate(date) {
-  return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
-}*/
+function isDate(date) {
+  let regex = /^([+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([.,]\d+(?!:))?)?(\17[0-5]\d([.,]\d+)?)?([zZ]|([+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/g
+  return date.match(regex)
+}
 
 /**
    * Create html element
@@ -144,13 +145,13 @@ function createNotExpandedElement (node) {
 
   const valueType = ' json-' + typeof node.value
   const urlUnderline = (typeof node.value == 'string' && isURL(node.value)) ? ' url' : ''
-  //const dateStr = (typeof node.value == 'string' && !isURL(node.value) && isDate(node.value)) ? new Date(node.value).toString() : ''
+  const dateStr = (typeof node.value == 'string' && isDate(node.value)) ? new Date(node.value).toString() : ''
   const valueContent = String(node.value)
   const valueElement = createElement('div', {
     className: 'json-value' + valueType + urlUnderline,
     content: valueContent,
     typeOf: typeof node.value,
-    date: ''
+    date: dateStr
   })
 
   const lineElem = createElement('div', {

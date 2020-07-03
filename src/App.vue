@@ -57,12 +57,11 @@
               <v-card class="pa-2">
                 <v-card-actions>
                   <v-icon :title="validJSON().text" small class="ml-1 mr-1" :color="validJSON().color">mdi-circle</v-icon> 
-                  <v-spacer></v-spacer>
-                  <!--<v-btn @click="load(i)" class="" small="" outlined="">Load URL</v-btn>-->                  
+                  <v-spacer></v-spacer>               
                   <v-btn :disabled="disabled" @click="beautify(i)" class="" small="" text>Beautify</v-btn>
                   <v-btn :disabled="disabled" @click="minify(i)" class="" small="" text>Minify</v-btn>
                   <v-btn :disabled="disabled" @click="clear(i)" class="" small="" text>Clear</v-btn>
-                  <v-menu  offset-y>
+                  <v-menu open-on-hover="" offset-y>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         text
@@ -79,11 +78,11 @@
                         <v-list-item-title>Copy all</v-list-item-title>
                       </v-list-item>
                       <v-list-item :disabled="disabled" @click="download(i)" >
-                        <v-list-item-title>Download JSON</v-list-item-title>
+                        <v-list-item-title>Download as JSON</v-list-item-title>
                       </v-list-item>
-                      <!--<v-list-item :disabled="disabled" @click="downloadXML(i)" >
+                      <v-list-item :disabled="disabled" @click="downloadXML(i)" >
                         <v-list-item-title>Download as XML</v-list-item-title>
-                      </v-list-item>-->
+                      </v-list-item>
                       <v-divider></v-divider>
                       <!--<v-list-item @click="noop()" >
                         <v-list-item-title>Load from URL</v-list-item-title>
@@ -115,7 +114,27 @@
             <v-col cols="12" md="5" class="pb-0" style="position: relative;">
               <v-card class="pa-2 cheightf cscroll" >
                 <v-card-actions style="overflow: hidden;">
-                  <v-btn :disabled="disabled" @click="expandCollapseAll" class="" small="" text>{{expandCollButton()}} All</v-btn>
+                  <v-menu open-on-hover="" offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        text
+                        small
+                        class=""
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        View <v-icon small>mdi-menu-down</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item :disabled="disabled" @click="expandAll" >
+                        <v-list-item-title>Expand all</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item :disabled="disabled" @click="collapseAll" >
+                        <v-list-item-title>Collapse all</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                   <v-layout style="font-size: 0.9em;" class="key">
                     <v-spacer></v-spacer>
                     <v-icon small class="ml-2 mr-1" color="#86b25c">mdi-circle</v-icon> String
@@ -247,8 +266,7 @@ export default {
     tabMenuX: 0,
     tabMenuY: 0,
     tabMenuSpawnedFromIndex: 0,
-    loadingURL: false,
-    expanded: false
+    loadingURL: false
   }),
 
   created() {
@@ -286,58 +304,75 @@ export default {
   },
 
   methods: {
-    OBJtoXML(json) {
-      var self = this
-      var util = require('util')
-
-      let opts = {
-          attributes_key: false,
-          header: false
-      }
-
-      var result = opts.header ? '<?xml version="1.0" encoding="UTF-8"?>' : '';
-      opts.header = false;
-
-      if (json instanceof Array) { //Array
-          json.forEach(function (node) {
-              result += self.OBJtoXML(node);
-          });
-      } else if (typeof json === 'object') {
-          Object.keys(json).forEach(function (key) {
-              if (key !== opts.attributes_key) {
-                  var node = json[key],
-                      attributes = '';
-
-                  if (node === undefined || node === null) {
-                      node = '';
-                  }
-
-                  if (opts.attributes_key && json[opts.attributes_key]) {
-                      Object.keys(json[opts.attributes_key]).forEach(function (k) {
-                          attributes += util.format(' %s="%s"', k, json[opts.attributes_key][k]);
-                      });
-                  }
-                  var inner = self.OBJtoXML(node);
-
-                  if (inner) {
-                      result += util.format("<%s%s>%s</%s>", key, attributes, self.OBJtoXML(node), key);
-                  } else {
-                      result += util.format("<%s%s/>", key, attributes);
-                  }
-              }
-          });
-      } else {
-          if (json.toString().match(/^<!\[CDATA\[.*]]>$/)) {
-              return json.toString();
+    json2xml(o, tab) {
+      var toXml = function(v, name, ind) {
+          var xml = "";
+          if (v instanceof Array) {
+            for (var i=0, n=v.length; i<n; i++)
+                xml += ind + toXml(v[i], name, ind+"\t") + "\n";
           }
-          return json.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+          else if (typeof(v) == "object") {
+            var hasChild = false;
+            xml += ind + "<" + name;
+            for (let m in v) {
+                if (m.charAt(0) == "@")
+                  xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+                else
+                  hasChild = true;
+            }
+            xml += hasChild ? ">" : "/>";
+            if (hasChild) {
+                for (let m in v) {
+                  if (m == "#text")
+                      xml += v[m];
+                  else if (m == "#cdata")
+                      xml += "<![CDATA[" + v[m] + "]]>";
+                  else if (m.charAt(0) != "@")
+                      xml += toXml(v[m], m, ind+"\t");
+                }
+                xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+            }
+          }
+          else {
+            xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+          }
+          return xml;
+      }, xml="";
+      for (var m in o)
+          xml += toXml(o[m], m, "");
+      let final = tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
+      return '<?xml version="1.0" encoding="UTF-8" ?><root>' + final + '</root>'
+    },
+    ConvertToCSV(objArray) {
+      let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+      if(!Array.isArray(array))
+          array = [array];
+
+      let str = '';
+
+      for (let i = 0; i < array.length; i++) {
+        let line = '';
+        for (let index in array[i]) {
+          if (line != '') line += ','
+
+          const item = array[i][index];
+          line += (typeof item === 'object' && item !== null ? this.ConvertToCSV(item) : item);
+        }
+
+        str += line + '\r\n';
       }
 
-      return result;
+      do{
+          str = str.replace(',,',',').replace(',','\t').trim();
+      }while(str.includes(',')||str.includes('\n'));
+
+      return str;
     },
-    expandCollapseAll() { 
-      this.expanded = !this.expanded
-      this.$refs.tree[this.tab].expandCollapseAll()
+    expandAll() { 
+      this.$refs.tree[this.tab].expandAll()
+    },
+    collapseAll() { 
+      this.$refs.tree[this.tab].collapseAll()
     },
     url(url) {
       this.loadingURL = true
@@ -459,9 +494,11 @@ export default {
       document.body.appendChild(downloadAnchorNode); // required for firefox
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
+
+      //this.topMenuVisible = false
     },
     downloadXML(i) {
-      let dataRaw = this.OBJtoXML(JSON.parse(this.tabs[i].json))
+      let dataRaw = this.json2xml(JSON.parse(this.tabs[i].json))
       let dataStr = "data:text/xml;charset=utf-8," + encodeURIComponent(dataRaw);
 
       var downloadAnchorNode = document.createElement('a');
@@ -472,6 +509,23 @@ export default {
       document.body.appendChild(downloadAnchorNode); // required for firefox
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
+
+      //this.topMenuVisible = false
+    },
+    downloadCSV(i) {
+      let dataRaw = this.ConvertToCSV(this.tabs[i].json)
+      let dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(dataRaw);
+
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href",     dataStr);
+      downloadAnchorNode.setAttribute("download", "inspect.csv");
+      downloadAnchorNode.style.position = 'absolute';
+      downloadAnchorNode.style.left = '-9999px';
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+
+      //this.topMenuVisible = false
     },
     beautify(i) {
       this.tabs[i].json = JSON.stringify(JSON.parse(this.tabs[i].json), null, 4)
@@ -512,9 +566,6 @@ export default {
 
       return valid
     },
-    expandCollButton: function() {
-      return (this.expanded) ? 'Collapse' : 'Expand'
-    }
   },
 
   computed: {
