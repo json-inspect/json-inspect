@@ -87,7 +87,7 @@
 }
 
 .json-key {
-	color: #444;
+	
 	margin-right: 4px;
 	margin-left: 4px;
 }

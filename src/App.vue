@@ -624,7 +624,7 @@ export default {
       border: 4px solid rgba(0, 0, 0, 0);
       background-clip: padding-box;
       -webkit-border-radius: 7px;
-      background-color: rgba(0, 0, 0, 0.45);
+      background-color: rgba(80, 80, 80, 0.45);
       //-webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
   }
   &::-webkit-scrollbar-button {
@@ -646,10 +646,10 @@ export default {
     }
     &::-webkit-scrollbar-thumb {
         height: 6px;
-        border: 4px solid rgba(0, 0, 0, 0);
+        border: 4px solid rgba(40, 40, 40, 0);
         background-clip: padding-box;
         -webkit-border-radius: 7px;
-        background-color: rgba(0, 0, 0, 0.45);
+        background-color: rgba(80, 80, 80, 0.45);
         //-webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
     }
     &::-webkit-scrollbar-button {
