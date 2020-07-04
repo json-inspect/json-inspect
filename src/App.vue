@@ -203,7 +203,7 @@
     </v-menu>
     <v-footer absolute="" color="transparent" class="my-0 px-7" style="font-size: 0.9em;" app>
       <v-spacer></v-spacer>
-      <div>Made with ❤️ by Emily Carlsen <v-btn icon target="_blank" href="https://twitter.com/emilyplusplus"><v-icon >mdi-twitter</v-icon></v-btn> <v-btn style="margin-left: -10px;" icon target="_blank" href="https://www.instagram.com/emilyplusplus/"><v-icon >mdi-instagram</v-icon></v-btn> <!--<v-btn style="margin-left: -10px;" icon target="_blank" href="https://emilyplusplus.wordpress.com/"><v-icon >mdi-wordpress</v-icon></v-btn>--> · Open source software <v-btn icon target="_blank" href="https://github.com/json-inspect"><v-icon >mdi-github</v-icon></v-btn> · <a target="_blank" href="http://json.org">json.org</a></div>
+      <div>Made with ❤️ by Emily Carlsen <v-btn icon target="_blank" href="https://twitter.com/emilyplusplus"><v-icon >mdi-twitter</v-icon></v-btn> <v-btn style="margin-left: -10px;" icon target="_blank" href="https://www.instagram.com/emilyplusplus/"><v-icon >mdi-instagram</v-icon></v-btn> <!--<v-btn style="margin-left: -10px;" icon target="_blank" href="https://emilyplusplus.wordpress.com/"><v-icon >mdi-wordpress</v-icon></v-btn>--> · Open source software: <v-btn icon target="_blank" href="https://github.com/json-inspect"><v-icon >mdi-github</v-icon></v-btn> · What is JSON? <a target="_blank" href="http://json.org">json.org</a></div>
     </v-footer>
   </v-app>
 </template>
