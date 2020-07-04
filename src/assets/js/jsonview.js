@@ -2,7 +2,7 @@
 
 import { EventBus } from './event.js';
 
-function isURL(str) {
+/*function isURL(str) {
   var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
     '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
@@ -15,7 +15,7 @@ function isURL(str) {
 function isDate(date) {
   let regex = /^([+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([.,]\d+(?!:))?)?(\17[0-5]\d([.,]\d+)?)?([zZ]|([+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/g
   return date.match(regex)
-}
+}*/
 
 /**
    * Create html element
@@ -144,8 +144,12 @@ function createNotExpandedElement (node) {
   })
 
   const valueType = ' json-' + typeof node.value
-  const urlUnderline = (typeof node.value == 'string' && isURL(node.value)) ? ' url' : ''
-  const dateStr = (typeof node.value == 'string' && isDate(node.value)) ? new Date(node.value).toString() : ''
+  //const urlUnderline = (typeof node.value == 'string' && isURL(node.value)) ? ' url' : ''
+  //const dateStr = (typeof node.value == 'string' && isDate(node.value)) ? new Date(node.value).toString() : ''
+  let urlUnderline = ''
+  let dateStr = ''
+  
+  
   const valueContent = String(node.value)
   const valueElement = createElement('div', {
     className: 'json-value' + valueType + urlUnderline,
