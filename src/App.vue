@@ -45,7 +45,8 @@
         <v-icon small class="mr-2">mdi-theme-light-dark</v-icon>  Day/Night Mode
       </v-btn>
     </v-app-bar>
-    <v-main class="pb-4">
+    <v-main class="pb-4" >
+      <!--v-bind:style="{ background: (darkMode) ? '#1e1e1e !important' : '#fff !important' }"-->
       <v-tabs-items v-model="tab">
         <v-tab-item
           v-for="(tab, i) in tabs"
@@ -54,7 +55,7 @@
           <v-row class="ma-4">
             <v-col cols="12" md="5" class="pb-0">
               
-              <v-card class="pa-2">
+              <v-card :elevation="darkMode ? 6 : 2" class="pa-2">
                 <v-card-actions>
                   <v-icon :title="validJSON().text" small class="ml-1 mr-1" :color="validJSON().color">mdi-circle</v-icon> 
                   <v-spacer></v-spacer>               
@@ -112,7 +113,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="5" class="pb-0" style="position: relative;">
-              <v-card class="pa-2 cheightf cscroll" >
+              <v-card :elevation="darkMode ? 6 : 2" class="pa-2 cheightf cscroll" >
                 <v-card-actions style="overflow: hidden;">
                   <v-menu open-on-hover="" offset-y>
                     <template v-slot:activator="{ on, attrs }">
@@ -157,7 +158,7 @@
                 ></v-progress-circular>
             </v-col>
             <v-col cols="12" md="2">
-              <v-card class="cheightf ad pa-8" target="_blank" href="https://twitter.com/messages/compose?recipient_id=1255587745&text=I%27m%20interested%20in%20advertising%20my%20product%20or%20service%20on%20jsoninspect.com%2C%20and%20would%20love%20to%20get%20in%20touch%20with%20you.">
+              <v-card :elevation="darkMode ? 6 : 2" class="cheightf ad pa-8" target="_blank" href="https://twitter.com/messages/compose?recipient_id=1255587745&text=I%27m%20interested%20in%20advertising%20my%20product%20or%20service%20on%20jsoninspect.com%2C%20and%20would%20love%20to%20get%20in%20touch%20with%20you.">
                 <v-row style="height: 100%;" align="center"
                     justify="center">
                     <v-col>
@@ -590,6 +591,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.theme--dark.v-application {
+  background: #1e1e1e !important;
+}
 .cheightf {
   height: calc(100vh - 165px);
 }
