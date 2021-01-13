@@ -95,7 +95,7 @@
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="(tab, i) in tabs" :key="i">
           <v-row class="ma-4">
-            <v-dialog persistent v-model="compareDialog" width="800">
+            <v-dialog v-model="compareDialog" width="800">
               <v-card>
                 <v-card-actions>
                   <v-spacer></v-spacer>
