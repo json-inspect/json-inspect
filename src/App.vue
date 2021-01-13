@@ -54,7 +54,7 @@
                 v-else
                 v-for="(comparison, i) in comparisonOptions"
                 :key="i"
-                @click="compare(comparison.a, comparison.b)"
+                @click.stop="compare(comparison.a, comparison.b)"
               >
                 <v-list-item-title
                   >{{ comparison.a.name }} ⇄
@@ -92,33 +92,33 @@
     </v-app-bar>
     <v-main class="pb-4">
       <!--v-bind:style="{ background: (darkMode) ? '#1e1e1e !important' : '#fff !important' }"-->
+      <v-dialog v-model="compareDialog" width="800">
+        <v-card>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click.stop="compareDialog = false" class="" small="" icon
+              ><v-icon :title="'Close'" small class="ml-1 mr-1"
+                >mdi-close</v-icon
+              ></v-btn
+            >
+          </v-card-actions>
+          <div class="d-flex pa-6">
+            <tree-view
+              v-if="compareA != null"
+              :index="Date.now()"
+              :json="compareA.json"
+            />
+            <tree-view
+              v-if="compareB != null"
+              :index="Date.now() + 1"
+              :json="compareB.json"
+            />
+          </div>
+        </v-card>
+      </v-dialog>
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="(tab, i) in tabs" :key="i">
           <v-row class="ma-4">
-            <v-dialog v-model="compareDialog" width="800">
-              <v-card>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn @click="compareDialog = false" class="" small="" icon
-                    ><v-icon :title="'Close'" small class="ml-1 mr-1"
-                      >mdi-close</v-icon
-                    ></v-btn
-                  >
-                </v-card-actions>
-                <div class="d-flex pa-6">
-                  <tree-view
-                    v-if="compareA != null"
-                    :index="Date.now()"
-                    :json="compareA.json"
-                  />
-                  <tree-view
-                    v-if="compareB != null"
-                    :index="Date.now() + 1"
-                    :json="compareB.json"
-                  />
-                </div>
-              </v-card>
-            </v-dialog>
             <v-col cols="12" md="5" class="pb-0">
               <v-card :elevation="darkMode ? 6 : 2" class="pa-2">
                 <v-card-actions>
@@ -560,9 +560,13 @@ export default {
       });
     },
     compare(a, b) {
-      this.compareA = a;
-      this.compareB = b;
-      this.compareDialog = true;
+      this.compareDialog = false;
+
+      this.$nextTick(() => {
+        this.compareA = a;
+        this.compareB = b;
+        this.compareDialog = true;
+      });
     },
     duplicate(i) {
       this.tabs.splice(i + 1, 0, {
