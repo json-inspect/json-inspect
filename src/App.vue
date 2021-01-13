@@ -44,11 +44,22 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-item v-if="comparisonOptions.length == 0" :disabled="true">
+              <v-list-item
+                v-if="comparisonOptions.length == 0"
+                :disabled="true"
+              >
                 <v-list-item-title>Open 2 or more tabs...</v-list-item-title>
               </v-list-item>
-              <v-list-item v-else v-for="(comparison, i) in comparisonOptions" :key="i" @click="compare(comparison.a, comparison.b)">
-                <v-list-item-title>{{comparison.a.name}} ⇄ {{comparison.b.name}}</v-list-item-title>
+              <v-list-item
+                v-else
+                v-for="(comparison, i) in comparisonOptions"
+                :key="i"
+                @click="compare(comparison.a, comparison.b)"
+              >
+                <v-list-item-title
+                  >{{ comparison.a.name }} ⇄
+                  {{ comparison.b.name }}</v-list-item-title
+                >
               </v-list-item>
             </v-list>
           </v-menu>
@@ -84,6 +95,30 @@
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="(tab, i) in tabs" :key="i">
           <v-row class="ma-4">
+            <v-dialog persistent v-model="compareDialog" width="800">
+              <v-card>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="compareDialog = false" class="" small="" icon
+                    ><v-icon :title="'Close'" small class="ml-1 mr-1"
+                      >mdi-close</v-icon
+                    ></v-btn
+                  >
+                </v-card-actions>
+                <div class="d-flex pa-6">
+                  <tree-view
+                    v-if="compareA != null"
+                    :index="Date.now()"
+                    :json="compareA.json"
+                  />
+                  <tree-view
+                    v-if="compareB != null"
+                    :index="Date.now() + 1"
+                    :json="compareB.json"
+                  />
+                </div>
+              </v-card>
+            </v-dialog>
             <v-col cols="12" md="5" class="pb-0">
               <v-card :elevation="darkMode ? 6 : 2" class="pa-2">
                 <v-card-actions>
@@ -351,6 +386,9 @@ export default {
     tabMenuSpawnedFromIndex: 0,
     loadingURL: false,
     comparisonOptions: [],
+    compareDialog: false,
+    compareA: null,
+    compareB: null,
   }),
 
   created() {
@@ -381,19 +419,27 @@ export default {
       handler(updated) {
         localStorage.setItem("tabs", JSON.stringify(updated));
 
-        this.comparisonOptions.splice(0, this.comparisonOptions.length)
-        if(updated.length > 1) {
-          for(let i = 0; i < updated.length; i++) {
-            for(let j = i + 1; j < updated.length; j++) {
+        this.comparisonOptions.splice(0, this.comparisonOptions.length);
+        if (updated.length > 1) {
+          for (let i = 0; i < updated.length; i++) {
+            for (let j = i + 1; j < updated.length; j++) {
               this.comparisonOptions.push({
                 a: updated[i],
-                b: updated[j]
-              })
+                b: updated[j],
+              });
             }
           }
         }
       },
       deep: true,
+    },
+    compareDialog: {
+      handler(updated) {
+        if (updated == false) {
+          this.compareA = null;
+          this.compareB = null;
+        }
+      },
     },
   },
 
@@ -514,7 +560,9 @@ export default {
       });
     },
     compare(a, b) {
-      console.log(a,b)
+      this.compareA = a;
+      this.compareB = b;
+      this.compareDialog = true;
     },
     duplicate(i) {
       this.tabs.splice(i + 1, 0, {
